@@ -1,27 +1,27 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 
-const useClick = onClick => {
-  const element = useRef();
-  useEffect(() => {
-    if (element.current) {
-      element.current.addEventListener("click", onClick);
+const useConfirm = (message = "", callback, rejection) => {
+  if (typeof callback !== "function") {
+    return;
+  }
+  const confirmAction = () => {
+    if (confirm(message)) {
+      callback();
+    } else {
+      rejection();
     }
-    return () => {
-      if (element.current) {
-        element.current.removeEventListener("click", onClick);
-      }
-    };
-  }, []);
-  return element;
+  };
+  return confirmAction;
 };
 
 const App = () => {
-  const sayHello = () => console.log("say Hello");
-  const title = useClick(sayHello);
+  const deleteWorld = () => console.log("Deleting the world...");
+  const abort = () => console.log("Aborted");
+  const confirmDelete = useConfirm("Are you sure?", deleteWorld, abort);
   return (
     <div className="App">
-      <div ref={title}>Hi</div>
+      <button onClick={confirmDelete}>delete the world</button>
     </div>
   );
 };
