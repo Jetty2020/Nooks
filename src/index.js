@@ -1,16 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 
+const useClick = onClick => {
+  const element = useRef();
+  useEffect(() => {
+    if (element.current) {
+      element.current.addEventListener("click", onClick);
+    }
+    return () => {
+      if (element.current) {
+        element.current.removeEventListener("click", onClick);
+      }
+    };
+  }, []);
+  return element;
+};
+
 const App = () => {
-  const sayHello = () => console.log("hello");
-  const [number, setNumber] = useState(0);
-  const [aNumber, setAnumber] = useState(0);
-  useEffect(sayHello, [number]);
+  const sayHello = () => console.log("say Hello");
+  const title = useClick(sayHello);
   return (
     <div className="App">
-      <div>Hi</div>
-      <button onClick={() => setNumber(number + 1)}>{number}</button>
-      <button onClick={() => setAnumber(aNumber + 1)}>{aNumber}</button>
+      <div ref={title}>Hi</div>
     </div>
   );
 };
